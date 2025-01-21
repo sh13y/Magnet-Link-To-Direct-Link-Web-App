@@ -68,7 +68,9 @@ magnet:?xt=urn:btih:a9a8257fbc7726a891e94f04500fb7c51df25e69
 ## 🚀 Deployment Options
 
 ### 1. Vercel (The Easy Way)
-
+> ⚠️ **Important Warning**: Vercel deployment is only suitable for demo/testing purposes! 
+> Vercel has strict limitations on execution time and file operations that make it unsuitable for production use of WebTorrent applications. 
+> For actual production use, please use a VPS or Docker deployment instead.
 
 ```bash
 # Install Vercel CLI
@@ -189,4 +191,3 @@ Remember: With great power comes great download responsibility! 🦸‍♂️
 ---
 Made in Ceylon 🇱🇰 with ❤️ by sh13y and probably too much back pain 🦴 
 (Send help... and a better chair! 🪑)
----
