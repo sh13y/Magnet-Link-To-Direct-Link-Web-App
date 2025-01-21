@@ -16,7 +16,7 @@ This app is your savior - it converts those cryptic magnet links into normal, fr
 
 ## 📁 Project Structure
 ```bash
-webtorrent-webrtc-app/
+Magnet-Link-To-Direct-Link-Web-App/
 ├── api/
 │   └── index.js           # API endpoints & WebTorrent logic
 ├── public/
