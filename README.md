@@ -84,30 +84,89 @@ vercel
 
 ### 2. VPS (The Pro Way)
 ```bash
-# Install PM2
+# 1. First, install Node.js and npm on your VPS
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 2. Clone the repository
+git clone https://github.com/sh13y/Magnet-Link-To-Direct-Link-Web-App
+cd Magnet-Link-To-Direct-Link-Web-App
+
+# 3. Install dependencies
+npm install
+
+# 4. Install PM2 globally
 npm i -g pm2
 
-# Start the app
-npm run start
-
-# Or with PM2
+# 5. Start the app with PM2
 pm2 start server.js --name magnet-converter
 
-# Monitor logs
-pm2 logs magnet-converter
+# Other useful PM2 commands:
+pm2 logs magnet-converter    # View logs
+pm2 status                   # Check status
+pm2 restart magnet-converter # Restart app
+pm2 stop magnet-converter    # Stop app
+pm2 delete magnet-converter  # Remove app from PM2
+
+# 6. Setup PM2 to start on system boot
+pm2 startup
+pm2 save
+
+# 7. Optional: Setup basic firewall
+sudo ufw allow 22           # SSH port
+sudo ufw allow 3000         # App port
+sudo ufw enable
 ```
+
+> 💡 **Pro Tips for VPS:**
+> - Use `screen` or `tmux` for persistent terminal sessions
+> - Set up SSL with Nginx or Certbot for HTTPS
+> - Keep your system updated: `sudo apt update && sudo apt upgrade`
+> - Monitor disk space: `df -h`
+> - Check system resources: `htop`
 
 ### 3. Docker (The Cool Way)
 ```bash
-# Build the image
+# 1. Create a Dockerfile if not exists
+cat > Dockerfile << 'EOF'
+FROM node:18-slim
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+EOF
+
+# 2. Build the image
 docker build -t magnet-converter .
 
-# Run the container
+# 3. Run for testing
 docker run -p 3000:3000 magnet-converter
 
-# With persistent storage
-docker run -p 3000:3000 -v /your/path:/app/downloads magnet-converter
+# 4. Run in production
+docker run -d \
+  --name magnet-converter \
+  -p 3000:3000 \
+  -v $(pwd)/downloads:/app/downloads \
+  --restart unless-stopped \
+  magnet-converter
+
+# 5. View logs
+docker logs -f magnet-converter
+
+# Other useful commands:
+docker ps                    # List running containers
+docker stop magnet-converter # Stop the container
+docker start magnet-converter # Start the container
+docker rm magnet-converter   # Remove the container
 ```
+
+> 💡 **Docker Pro Tips:**
+> - Use `docker-compose` for easier management
+> - Set up container monitoring with Portainer
+> - Use Docker volumes for persistent storage
+> - Remember to clean up old containers and images
 
 ## 🐛 Troubleshooting (When Things Go South)
 
