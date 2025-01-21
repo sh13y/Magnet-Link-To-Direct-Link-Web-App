@@ -32,10 +32,10 @@ webtorrent-webrtc-app/
 
 ```bash
 # Clone this beauty
-git clone https://github.com/sh13y/magnet-to-direct.git
+git clone https://github.com/sh13y/Magnet-Link-To-Direct-Link-Web-App
 
 # Jump into the folder
-cd magnet-to-direct
+cd Magnet-Link-To-Direct-Link-Web-App
 
 # Install the goodies
 npm install
