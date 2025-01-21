@@ -1,0 +1,21 @@
+{
+  "name": "webtorrent-webrtc-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "vercel-build": "echo 'Build step completed'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2",
+    "webtorrent": "^2.5.13"
+  }
+}

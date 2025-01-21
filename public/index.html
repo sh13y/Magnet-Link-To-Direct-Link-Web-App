@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torrent to Direct Link Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* ... copy all the styles from torrent_downloader/public/index.html ... */
+    </style>
+</head>
+<body>
+    <h1>Torrent to Direct Link Converter</h1>
+    
+    <div class="input-group">
+        <input type="text" id="magnetLink" placeholder="Paste your magnet link here" aria-label="Magnet Link">
+        <button onclick="startDownload()"><i class="fas fa-download"></i> Convert</button>
+        <button onclick="cancelDownload()" id="cancelButton" style="display: none; background-color: #dc3545;"><i class="fas fa-times"></i> Cancel</button>
+    </div>
+
+    <div id="status" class="status-container"></div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
