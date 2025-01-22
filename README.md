@@ -226,9 +226,28 @@ ERROR 3: "Download failed"
 PORT=3000              # Server port
 NODE_ENV=development   # Environment (development/production)
 
-# Optional
-CLEANUP_TIMEOUT=3600   # Time before deleting completed downloads (seconds)
+# WebTorrent Settings
+ENABLE_UPLOAD=true     # Enable/disable uploading (true/false)
 MAX_DOWNLOADS=10       # Maximum concurrent downloads
+CLEANUP_TIMEOUT=3600   # Time before deleting completed downloads (seconds)
+MIN_PERCENTAGE=0       # Minimum download percentage to show (prevents negative %)
+MAX_PERCENTAGE=100     # Maximum download percentage to show (caps at 100%)
+DOWNLOAD_PATH="./downloads"  # Path to save downloaded files
+```
+
+> 💡 **Pro Tip:** Create a `.env` file in your project root with these settings:
+```bash
+# Create .env file
+cat > .env << 'EOF'
+PORT=3000
+NODE_ENV=production
+ENABLE_UPLOAD=true
+MAX_DOWNLOADS=10
+CLEANUP_TIMEOUT=3600
+MIN_PERCENTAGE=0
+MAX_PERCENTAGE=100
+DOWNLOAD_PATH="./downloads"
+EOF
 ```
 
 ### Available Scripts
@@ -243,6 +262,27 @@ npm run build    # Build for production
 # Maintenance
 npm run clean    # Clean temporary files
 npm run logs     # Show PM2 logs
+```
+
+### Controlling Uploads and Downloads
+
+#### Upload Control
+- Set `ENABLE_UPLOAD=false` in `.env` to disable uploading (client becomes download-only)
+- Set `ENABLE_UPLOAD=true` to allow uploading (default P2P behavior)
+
+#### Download Progress
+The app now properly handles download percentages:
+- Prevents negative percentages
+- Caps maximum percentage at 100%
+- Shows accurate progress even with multiple files
+
+Example progress display:
+```javascript
+{
+    "Downloading": "45.6%",    // Normal progress
+    "Starting": "0%",          // Initial state
+    "Complete": "100%"         // Finished download
+}
 ```
 
 ## 🤝 Want to Help?

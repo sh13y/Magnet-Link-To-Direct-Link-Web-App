@@ -12,6 +12,9 @@ const downloads = new Map();
 const CLEANUP_TIMEOUT = parseInt(process.env.CLEANUP_TIMEOUT) || 3600;
 const MAX_DOWNLOADS = parseInt(process.env.MAX_DOWNLOADS) || 10;
 const DOWNLOAD_PATH = process.env.DOWNLOAD_PATH || '/tmp/downloads';
+const ENABLE_UPLOAD = process.env.ENABLE_UPLOAD === 'true';
+const MIN_PERCENTAGE = parseFloat(process.env.MIN_PERCENTAGE || 0);
+const MAX_PERCENTAGE = parseFloat(process.env.MAX_PERCENTAGE || 100);
 
 // Important: Add these middleware before routes
 handler.use(express.json());
@@ -40,7 +43,8 @@ handler.post('/api/download', (req, res) => {
         const downloadId = crypto.randomBytes(16).toString('hex');
         
         const torrent = client.add(magnet, { 
-            path: `${DOWNLOAD_PATH}/${downloadId}`
+            path: `${DOWNLOAD_PATH}/${downloadId}`,
+            uploadLimit: ENABLE_UPLOAD ? 0 : 1  // Limit upload to 1 byte/s if uploads disabled
         });
         
         downloads.set(downloadId, torrent);
@@ -93,7 +97,7 @@ handler.get('/api/status/:downloadId', (req, res) => {
                 status: 'downloading',
                 name: torrent.name,
                 files,
-                progress: (torrent.progress * 100),
+                progress: normalizePercentage(torrent.progress),
                 downloadSpeed: (torrent.downloadSpeed / (1024 * 1024)).toFixed(2),
                 uploaded: torrent.uploaded,
                 downloaded: torrent.downloaded,
@@ -143,5 +147,10 @@ handler.delete('/api/download/:downloadId', (req, res) => {
         res.status(500).json({ error: 'Failed to cancel download' });
     }
 });
+
+function normalizePercentage(progress) {
+    const percentage = progress * 100;
+    return Math.min(Math.max(percentage, MIN_PERCENTAGE), MAX_PERCENTAGE);
+}
 
 export default handler; 
