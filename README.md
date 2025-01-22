@@ -14,6 +14,135 @@ This app is your savior - it converts those cryptic magnet links into normal, fr
 - 🔄 Individual file downloads (why wait for everything?)
 - 📊 Live stats (speed, time, size - we've got all the numbers!)
 
+## 🎓 Code Review for Beginners
+
+### Project Structure Explained
+```
+Magnet-Link-To-Direct-Link-Web-App/
+├── api/                  # Backend API code
+│   └── index.js         # Main API logic
+├── public/              # Frontend files
+│   ├── index.html       # Main webpage
+│   └── app.js          # Frontend JavaScript
+└── src/
+    └── server.js       # Development server
+```
+
+### Key Components Explained
+
+#### 1. Frontend (`public/index.html` & `app.js`)
+- **index.html**: Contains the user interface
+  ```html
+  <!-- Main input form -->
+  <div class="input-group">
+      <input type="text" id="magnetLink" placeholder="Paste your magnet link here">
+      <button onclick="startDownload()">Convert</button>
+  </div>
+
+  <!-- Status display area -->
+  <div id="status"></div>
+  ```
+
+- **app.js**: Handles user interactions
+  ```javascript
+  // When user clicks "Convert"
+  function startDownload() {
+      const magnetLink = document.getElementById('magnetLink').value;
+      // Send magnet link to server
+      fetch('/api/download', {
+          method: 'POST',
+          body: JSON.stringify({ magnet: magnetLink })
+      });
+  }
+
+  // Check download progress every second
+  setInterval(() => {
+      checkStatus();
+  }, 1000);
+  ```
+
+#### 2. Backend (`api/index.js`)
+- **Main Components**:
+  ```javascript
+  // 1. Setup WebTorrent client
+  const client = new WebTorrent({
+      uploadLimit: ENABLE_UPLOAD ? -1 : 1024,  // Control upload speed
+      maxConns: PEER_LIMIT                     // Control connections
+  });
+
+  // 2. Handle new download requests
+  handler.post('/api/download', (req, res) => {
+      const { magnet } = req.body;             // Get magnet link
+      const downloadId = createUniqueId();      // Generate ID
+      const torrent = client.add(magnet);      // Start download
+      // Send response to user
+  });
+
+  // 3. Check download status
+  handler.get('/api/status/:downloadId', (req, res) => {
+      const torrent = downloads.get(req.params.downloadId);
+      // Send progress info
+  });
+  ```
+
+### Important Concepts for Beginners
+
+1. **Environment Variables** (`.env`)
+   ```env
+   ENABLE_UPLOAD=true    # Control if uploading is allowed
+   MAX_DOWNLOADS=10      # Maximum simultaneous downloads
+   PEER_LIMIT=50        # Maximum peer connections
+   ```
+   - These control how the app behaves
+   - Can be changed without modifying code
+
+2. **API Endpoints**
+   - `/api/download`: Start a new download
+   - `/api/status`: Check download progress
+   - `/api/downloads`: List all downloads
+
+3. **WebTorrent Basics**
+   ```javascript
+   // Create a torrent
+   const torrent = client.add(magnet);
+
+   // Monitor progress
+   torrent.on('download', (bytes) => {
+       console.log('Progress:', torrent.progress);
+   });
+
+   // When download completes
+   torrent.on('done', () => {
+       console.log('Download complete!');
+   });
+   ```
+
+### Common Customizations
+
+1. **Change Download Location**
+   ```env
+   DOWNLOAD_PATH=./downloads  # Change where files are saved
+   ```
+
+2. **Adjust Upload Settings**
+   ```env
+   ENABLE_UPLOAD=false  # Disable uploading
+   ```
+
+3. **Control Connections**
+   ```env
+   PEER_LIMIT=30  # Reduce for slower connections
+   ```
+
+### Tips for Beginners
+1. Start by understanding `public/app.js` - it's the simplest part
+2. Look at `api/index.js` to see how downloads work
+3. Use the environment variables to experiment with settings
+4. Check the logs to understand what's happening
+5. Use the example magnet links for testing
+
+Need help? Check the troubleshooting section or open an issue!
+
 ## 📁 Project Structure
 ```bash
 Magnet-Link-To-Direct-Link-Web-App/
@@ -230,8 +359,9 @@ NODE_ENV=development   # Environment (development/production)
 ENABLE_UPLOAD=true     # Enable/disable uploading (true/false)
 MAX_DOWNLOADS=10       # Maximum concurrent downloads
 CLEANUP_TIMEOUT=3600   # Time before deleting completed downloads (seconds)
-MIN_PERCENTAGE=0       # Minimum download percentage to show (prevents negative %)
-MAX_PERCENTAGE=100     # Maximum download percentage to show (caps at 100%)
+MIN_PERCENTAGE=0       # Minimum download percentage to show
+MAX_PERCENTAGE=100     # Maximum download percentage to show
+PEER_LIMIT=50         # Maximum peer connections
 DOWNLOAD_PATH="./downloads"  # Path to save downloaded files
 ```
 
@@ -246,6 +376,7 @@ MAX_DOWNLOADS=10
 CLEANUP_TIMEOUT=3600
 MIN_PERCENTAGE=0
 MAX_PERCENTAGE=100
+PEER_LIMIT=50
 DOWNLOAD_PATH="./downloads"
 EOF
 ```

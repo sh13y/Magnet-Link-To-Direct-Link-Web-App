@@ -271,3 +271,53 @@ function startDownloadWithRetry() {
         }
     });
 }
+
+// Add this function to check available downloads
+async function checkAvailableDownloads() {
+    try {
+        const response = await fetch('/api/downloads');
+        const downloads = await response.json();
+        
+        // Show available downloads if any exist
+        if (downloads.length > 0) {
+            const availableFiles = downloads
+                .filter(d => d.files.some(f => f.completed))
+                .map(d => ({
+                    name: d.name,
+                    files: d.files.filter(f => f.completed)
+                }));
+
+            if (availableFiles.length > 0) {
+                const statusDiv = document.getElementById('status');
+                statusDiv.innerHTML += `
+                    <div class="status-card">
+                        <h3>Available Downloads</h3>
+                        <div class="files-list">
+                            ${availableFiles.map(download => `
+                                <div class="file-item">
+                                    <h4>${download.name}</h4>
+                                    ${download.files.map(file => `
+                                        <div class="file-info">
+                                            <span class="file-name">
+                                                <i class="${getFileIcon(file.name)}"></i>
+                                                ${file.name}
+                                            </span>
+                                            <a href="${file.downloadUrl}" class="download-link">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Error checking available downloads:', error);
+    }
+}
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', checkAvailableDownloads);

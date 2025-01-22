@@ -9,7 +9,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const client = new WebTorrent();
+
+// Add environment variables
+const ENABLE_UPLOAD = process.env.ENABLE_UPLOAD === 'true';
+const PEER_LIMIT = parseInt(process.env.PEER_LIMIT) || 50;
+
+// Update WebTorrent client config
+const client = new WebTorrent({
+    uploadLimit: ENABLE_UPLOAD ? -1 : 1024,
+    maxConns: PEER_LIMIT,
+    downloadLimit: -1
+});
+
 const downloads = new Map();
 
 // In-memory storage for Vercel's serverless environment
