@@ -99,7 +99,25 @@ npm install
 npm i -g pm2
 
 # 5. Start the app with PM2
-pm2 start server.js --name magnet-converter
+pm2 start server.js --name magnet-converter --node-args="--experimental-modules"
+
+# Or alternatively, create an ecosystem file
+cat > ecosystem.config.cjs << 'EOF'
+module.exports = {
+  apps: [{
+    name: 'magnet-converter',
+    script: 'server.js',
+    node_args: '--experimental-modules',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    }
+  }]
+}
+EOF
+
+# Then start using the ecosystem file
+pm2 start ecosystem.config.cjs
 
 # Other useful PM2 commands:
 pm2 logs magnet-converter    # View logs
@@ -250,3 +268,12 @@ Remember: With great power comes great download responsibility! 🦸‍♂️
 ---
 Made in Ceylon 🇱🇰 with ❤️ by sh13y and probably too much back pain 🦴 
 (Send help... and a better chair! 🪑)
+
+# Alternative fix: Add "type": "module" to package.json
+cat > package.json << 'EOF'
+{
+  "name": "magnet-converter",
+  "type": "module",
+  // ... rest of your package.json
+}
+EOF
