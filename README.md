@@ -439,12 +439,3 @@ Remember: With great power comes great download responsibility! 🦸‍♂️
 ---
 Made in Ceylon 🇱🇰 with ❤️ by sh13y and probably too much back pain 🦴 
 (Send help... and a better chair! 🪑)
-
-# Alternative fix: Add "type": "module" to package.json
-cat > package.json << 'EOF'
-{
-  "name": "magnet-converter",
-  "type": "module",
-  // ... rest of your package.json
-}
-EOF
